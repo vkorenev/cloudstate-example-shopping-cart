@@ -39,7 +39,7 @@ jib {
     tags = ["java-" + version]
   }
   container {
-    mainClass = "io.cloudstate.samples.shoppingcart.Main"
+    mainClass = "com.example.shoppingcart.Main"
     ports = ["8080"]
   }
 }
