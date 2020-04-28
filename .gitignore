@@ -1,3 +1,11 @@
+.gradle/
+.idea/
+.classpath
+.project
+.settings/
+.bloop/
+.metals/
+.vscode/
 build/
 node_modules/
 **/src/_proto/
