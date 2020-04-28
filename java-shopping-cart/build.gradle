@@ -1,0 +1,44 @@
+plugins {
+  id "java"
+  id "idea"
+  id "com.google.protobuf" version "0.8.12"
+  id "com.google.cloud.tools.jib" version "2.2.0"
+}
+
+repositories {
+  mavenCentral()
+}
+
+group = "com.example"
+version = "0.1"
+
+dependencies {
+  implementation "io.cloudstate:cloudstate-java-support:0.4.3"
+  implementation "com.google.api.grpc:proto-google-common-protos:1.17.0"
+  implementation "ch.qos.logback:logback-classic:1.2.3"
+}
+
+protobuf {
+  protoc {
+    artifact = "com.google.protobuf:protoc:3.9.0"
+  }
+}
+
+java {
+  sourceCompatibility = JavaVersion.VERSION_11
+  targetCompatibility = JavaVersion.VERSION_11
+}
+
+jib {
+  from {
+    image = "openjdk:11-jdk"
+  }
+  to {
+    image = "lightbend-docker-registry.bintray.io/cloudstate-samples/shopping-cart"
+    tags = ["java-" + version]
+  }
+  container {
+    mainClass = "io.cloudstate.samples.shoppingcart.Main"
+    ports = ["8080"]
+  }
+}
