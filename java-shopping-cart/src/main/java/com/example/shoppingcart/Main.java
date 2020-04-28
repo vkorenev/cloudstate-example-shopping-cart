@@ -1,8 +1,6 @@
-package io.cloudstate.samples.shoppingcart;
+package com.example.shoppingcart;
 
 import io.cloudstate.javasupport.*;
-import com.example.shoppingcart.Shoppingcart;
-import static java.util.Collections.singletonMap;
 
 public final class Main {
   public static final void main(String[] args) throws Exception {

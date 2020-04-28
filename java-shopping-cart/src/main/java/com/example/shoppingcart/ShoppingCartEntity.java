@@ -1,6 +1,5 @@
-package io.cloudstate.samples.shoppingcart;
+package com.example.shoppingcart;
 
-import com.example.shoppingcart.Shoppingcart;
 import com.example.shoppingcart.persistence.Domain;
 import com.google.protobuf.Empty;
 import io.cloudstate.javasupport.EntityId;
