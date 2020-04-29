@@ -1,0 +1,69 @@
+// This is the public API offered by the shopping cart entity.
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "cloudstate/entity_key.proto";
+import "cloudstate/eventing.proto";
+import "google/api/annotations.proto";
+
+package com.example.inventory;
+
+message Add {
+    string product_id = 1 [(.cloudstate.entity_key) = true];
+    int32 quantity = 2;
+}
+
+message Remove {
+    string product_id = 1 [(.cloudstate.entity_key) = true];
+    int32 quantity = 2;
+}
+
+message Reserve {
+    string product_id = 1 [(.cloudstate.entity_key) = true];
+    string user_id = 2;
+    int32 quantity = 3;
+}
+
+message Cancel {
+    string product_id = 1 [(.cloudstate.entity_key) = true];
+    string user_id = 2;
+}
+
+message Buy {
+    string product_id = 1 [(.cloudstate.entity_key) = true];
+    string user_id = 2;
+}
+
+message GetAvailable {
+    string product_id = 1 [(.cloudstate.entity_key) = true];
+}
+
+message AvailableInventory {
+    int32 quantity = 1;
+}
+
+service ProductInventory {
+    rpc AddProductQuantity (Add) returns (google.protobuf.Empty) {
+        option (google.api.http).post = "/com.example.inventory.Inventory/product/{product_id}/add";
+    }
+
+    rpc RemoveProductQuantity (Remove) returns (google.protobuf.Empty) {
+        option (google.api.http).post = "/com.example.inventory.Inventory/product/{product_id}/remove";
+    }
+
+    rpc ReserveProduct (Reserve) returns (google.protobuf.Empty) {
+        option (google.api.http).post = "/com.example.inventory.Inventory/product/{product_id}/reserve";
+    }
+
+    rpc CancelReservation (Cancel) returns (google.protobuf.Empty) {
+        option (google.api.http).post = "/com.example.inventory.Inventory/product/{product_id}/cancel";
+    }
+
+    rpc BuyProduct (Buy) returns (google.protobuf.Empty) {
+        option (google.api.http).post = "/com.example.inventory.Inventory/product/{product_id}/buy";
+    }
+
+    rpc GetAvailableProductInventory (GetAvailable) returns (AvailableInventory) {
+        option (google.api.http).get = "/com.example.inventory.Inventory/product/{product_id}";
+    }
+}

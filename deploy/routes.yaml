@@ -11,6 +11,12 @@ spec:
         prefix: "/com.example.shoppingcart.ShoppingCart/"
     route:
       service: shopping-cart
+  - name: "inventory-routes"
+    match:
+    - uri:
+        prefix: "/com.example.inventory.Inventory/"
+    route:
+      service: inventory
   - name: "frontend-routes"
     match:
     - uri:

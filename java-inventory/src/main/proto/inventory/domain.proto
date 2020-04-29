@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package com.example.inventory.persistence;
+
+message AvailableInventoryChanged {
+    int32 quantity = 1;
+}
+
+message ProductReserved {
+    string user_id = 1;
+    int32 quantity = 2;
+}
+
+message ProductReservationCancelled {
+    string user_id = 1;
+}
+
+message ProductBought {
+    string user_id = 1;
+}
+
+message ProductInventory {
+    int32 available = 1;
+    map<string, int32> reserved = 2;
+}

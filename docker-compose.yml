@@ -13,3 +13,18 @@ services:
 
   shopping-cart-impl:
     image: lightbend-docker-registry.bintray.io/cloudstate-samples/shopping-cart:latest
+
+  inventory:
+    image: cloudstateio/cloudstate-proxy-dev-mode:latest
+    environment:
+      USER_FUNCTION_HOST: inventory-impl
+      USER_FUNCTION_PORT: 8080
+    depends_on:
+      - inventory-impl
+    ports:
+      - "9001:9000"
+
+  inventory-impl:
+    image: vkorenev/inventory:java-0.2
+    environment:
+      HOST: inventory-impl
