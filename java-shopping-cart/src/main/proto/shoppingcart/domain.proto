@@ -21,7 +21,18 @@ message ItemRemoved {
     string productId = 1;
 }
 
+message CartStatusChanged {
+    Cart.Status status = 1;
+}
+
 // The shopping cart state.
 message Cart {
     repeated LineItem items = 1;
+    Status status = 2;
+
+    enum Status {
+        SHOPPING = 0;
+        RESERVING = 1;
+        WAITING_FOR_PAYMENT = 2;
+    }
 }

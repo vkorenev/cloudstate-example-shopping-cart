@@ -12,7 +12,9 @@ services:
       - "9000:9000"
 
   shopping-cart-impl:
-    image: lightbend-docker-registry.bintray.io/cloudstate-samples/shopping-cart:latest
+    image: vkorenev/shopping-cart:java-0.2.5
+    environment:
+      HOST: shopping-cart-impl
 
   inventory:
     image: cloudstateio/cloudstate-proxy-dev-mode:latest

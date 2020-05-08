@@ -22,6 +22,10 @@ message RemoveLineItem {
     string product_id = 2;
 }
 
+message ResetShoppingCart {
+    string user_id = 1 [(.cloudstate.entity_key) = true];
+}
+
 message GetShoppingCart {
     string user_id = 1 [(.cloudstate.entity_key) = true];
 }
@@ -34,6 +38,18 @@ message LineItem {
 
 message Cart {
     repeated LineItem items = 1;
+    Status status = 2;
+
+    enum Status {
+        SHOPPING = 0;
+        RESERVING = 1;
+        WAITING_FOR_PAYMENT = 2;
+    }
+}
+
+message SetCartStatus {
+    string user_id = 1 [(.cloudstate.entity_key) = true];
+    Cart.Status status = 2;
 }
 
 service ShoppingCart {
@@ -47,6 +63,14 @@ service ShoppingCart {
 
     rpc RemoveItem(RemoveLineItem) returns (google.protobuf.Empty) {
         option (google.api.http).post = "/com.example.shoppingcart.ShoppingCart/cart/{user_id}/items/{product_id}/remove";
+    }
+
+    rpc SetStatus(SetCartStatus) returns (google.protobuf.Empty) {
+        option (google.api.http).post = "/com.example.shoppingcart.ShoppingCart/cart/{user_id}/set_status";
+    }
+
+    rpc ResetCartAfterPayment (ResetShoppingCart) returns (google.protobuf.Empty) {
+        option (google.api.http).post = "/com.example.shoppingcart.ShoppingCart/cart/{user_id}/reset_after_payment";
     }
 
     rpc GetCart(GetShoppingCart) returns (Cart) {

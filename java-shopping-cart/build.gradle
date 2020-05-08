@@ -2,7 +2,7 @@ plugins {
   id "java"
   id "idea"
   id "com.google.protobuf" version "0.8.12"
-  id "com.google.cloud.tools.jib" version "2.2.0"
+  id "com.google.cloud.tools.jib" version "2.3.0"
 }
 
 repositories {
@@ -13,7 +13,7 @@ repositories {
 }
 
 group = "com.example"
-version = "0.1"
+version = "0.2.5"
 
 dependencies {
   implementation "io.cloudstate:cloudstate-java-support:0.5.0"
@@ -35,7 +35,7 @@ jib {
     image = "openjdk:11-jdk"
   }
   to {
-    image = "lightbend-docker-registry.bintray.io/cloudstate-samples/shopping-cart"
+    image = "vkorenev/shopping-cart"
     tags = ["java-" + version]
   }
   container {
