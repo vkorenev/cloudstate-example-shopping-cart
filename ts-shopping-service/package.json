@@ -1,0 +1,44 @@
+{
+  "name": "shopping-service",
+  "version": "1.0.0",
+  "dependencies": {
+    "@grpc/proto-loader": "^0.5.1",
+    "cloudstate": "0.0.3",
+    "grpc": "^1.22.2",
+    "patch-package": "^6.2.2"
+  },
+  "devDependencies": {
+    "@types/google-protobuf": "^3.2.5",
+    "@typescript-eslint/eslint-plugin": "^2.31.0",
+    "@typescript-eslint/parser": "^2.31.0",
+    "concurrently": "^4.1.0",
+    "eslint": "^6.8.0",
+    "eslint-config-google": "^0.14.0",
+    "grpc-tools": "^1.8.1",
+    "protoc-bin": "^3.10.0",
+    "rimraf": "^3.0.2",
+    "ts-loader": "^6.0.1",
+    "ts-protoc-gen": "^0.12.0",
+    "typescript": "^3.7.4"
+  },
+  "scripts": {
+    "postinstall": "patch-package",
+    "clean": "rimraf build",
+    "compile:protoc:cloudstate": "protoc --proto_path=node_modules/cloudstate/proto --js_out=import_style=commonjs,binary:build/proto --ts_out=build/proto node_modules/cloudstate/proto/google/api/http.proto node_modules/cloudstate/proto/google/api/httpbody.proto node_modules/cloudstate/proto/google/api/annotations.proto node_modules/cloudstate/proto/cloudstate/entity_key.proto node_modules/cloudstate/proto/cloudstate/eventing.proto",
+    "compile:protoc:inventory": "grpc_tools_node_protoc --proto_path=node_modules/cloudstate/proto --proto_path='../java-inventory/src/main/proto/inventory' --js_out=import_style=commonjs,binary:build/proto --ts_out=service=grpc-node:build/proto --grpc_out=build/proto ../java-inventory/src/main/proto/inventory/inventory.proto",
+    "compile:protoc:shoppingcart": "grpc_tools_node_protoc --proto_path=node_modules/cloudstate/proto --proto_path='../java-shopping-cart/src/main/proto/shoppingcart' --js_out=import_style=commonjs,binary:build/proto --ts_out=service=grpc-node:build/proto --grpc_out=build/proto ../java-shopping-cart/src/main/proto/shoppingcart/shoppingcart.proto",
+    "precompile:protoc": "mkdirp build/proto",
+    "compile:protoc": "npm run compile:protoc:cloudstate && npm run compile:protoc:inventory && npm run compile:protoc:shoppingcart",
+    "compile:proto-desc": "compile-descriptor proto/shoppingservice.proto",
+    "precompile:pb:js": "mkdirp build/proto",
+    "compile:pb:js": "pbjs -t static-module -w commonjs -o build/proto/shoppingservice.js proto/shoppingservice.proto",
+    "compile:pb:ts": "pbts -o build/proto/shoppingservice.d.ts build/proto/shoppingservice.js",
+    "compile:pb": "npm run compile:pb:js && npm run compile:pb:ts",
+    "compile:ts": "tsc",
+    "predockerbuild": "npm run compile:protoc && npm run compile:proto-desc && npm run compile:pb && npm run compile:ts",
+    "dockerbuild": "docker build . -t vkorenev/shopping-service:ts-0.1",
+    "dockerpush": "docker push vkorenev/shopping-service:ts-0.1",
+    "dockerbuildpush": "npm run dockerbuild && npm run dockerpush",
+    "start": "node build/service.js"
+  }
+}

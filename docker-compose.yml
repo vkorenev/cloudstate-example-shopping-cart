@@ -30,3 +30,19 @@ services:
     image: vkorenev/inventory:java-0.2
     environment:
       HOST: inventory-impl
+
+  shopping-service:
+    image: cloudstateio/cloudstate-proxy-dev-mode:latest
+    environment:
+      USER_FUNCTION_HOST: shopping-service-impl
+      USER_FUNCTION_PORT: 8080
+    depends_on:
+      - shopping-service-impl
+    ports:
+      - "9002:9000"
+
+  shopping-service-impl:
+    image: vkorenev/shopping-service:ts-0.1
+    environment:
+      SHOPPING_CART_CLIENT_ADDRESS: shopping-cart:9000
+      PRODUCT_INVENTORY_CLIENT_ADDRESS: inventory:9000

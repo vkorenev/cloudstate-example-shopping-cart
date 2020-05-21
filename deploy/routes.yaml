@@ -5,7 +5,7 @@ metadata:
   name: "shopping-routes"
 spec:
   http:
-  - name: "shopping-routes"
+  - name: "shopping-cart-routes"
     match:
     - uri:
         prefix: "/com.example.shoppingcart.ShoppingCart/"
@@ -17,6 +17,12 @@ spec:
         prefix: "/com.example.inventory.Inventory/"
     route:
       service: inventory
+  - name: "shopping-service-routes"
+    match:
+    - uri:
+        prefix: "/com.example.shoppingservice.ShoppingService/"
+    route:
+      service: shopping-service
   - name: "frontend-routes"
     match:
     - uri:

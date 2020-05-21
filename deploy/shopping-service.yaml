@@ -1,0 +1,9 @@
+# Stateful service descriptor for the gateway app
+apiVersion: cloudstate.io/v1alpha1
+kind: StatefulService
+metadata:
+  name: shopping-service
+spec:
+  containers:
+  - image: vkorenev/shopping-service:ts-0.1
+    name: shopping-service
