@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
+
+package com.example.shoppingservice;
+
+message Reserve {
+    string user_id = 1;
+}
+
+message Confirm {
+    string user_id = 1;
+}
+
+message Cancel {
+    string user_id = 1;
+}
+
+message GetCart {
+    string user_id = 1;
+}
+
+message LineItem {
+    string product_id = 1;
+    string name = 2;
+    int32 quantity = 3;
+    int32 available_quantity = 4;
+}
+
+message Cart {
+    repeated LineItem items = 1;
+}
+
+service ShoppingService {
+    rpc GetShoppingCart(GetCart) returns (Cart) {
+        option (google.api.http).get = "/com.example.shoppingservice.ShoppingService/cart/{user_id}";
+    }
+
+    rpc ReserveCartItems(Reserve) returns (google.protobuf.Empty) {
+        option (google.api.http).post = "/com.example.shoppingservice.ShoppingService/cart/{user_id}/reserve";
+    }
+
+    rpc ConfirmOrder(Confirm) returns (google.protobuf.Empty) {
+        option (google.api.http).post = "/com.example.shoppingservice.ShoppingService/order/{user_id}/confirm";
+    }
+
+    rpc CancelOrder(Cancel) returns (google.protobuf.Empty) {
+        option (google.api.http).post = "/com.example.shoppingservice.ShoppingService/order/{user_id}/cancel";
+    }
+}
