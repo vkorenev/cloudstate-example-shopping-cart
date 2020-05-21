@@ -1,0 +1,15 @@
+version: "3.2"
+
+services:
+  shopping-cart:
+    image: cloudstateio/cloudstate-proxy-dev-mode:latest
+    environment:
+      USER_FUNCTION_HOST: shopping-cart-impl
+      USER_FUNCTION_PORT: 8080
+    depends_on:
+      - shopping-cart-impl
+    ports:
+      - "9000:9000"
+
+  shopping-cart-impl:
+    image: lightbend-docker-registry.bintray.io/cloudstate-samples/shopping-cart:latest
