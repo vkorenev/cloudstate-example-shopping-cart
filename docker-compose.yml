@@ -12,7 +12,7 @@ services:
       - "9000:9000"
 
   shopping-cart-impl:
-    image: vkorenev/shopping-cart:java-0.2.5
+    image: vkorenev/shopping-cart:ts-0.1.0
     environment:
       HOST: shopping-cart-impl
 
