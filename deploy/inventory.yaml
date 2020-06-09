@@ -11,5 +11,5 @@ spec:
       # Name of a deployed Datastore to use.
       name: shopping-store
   containers:
-    - image: vkorenev/inventory:java-0.2
+    - image: vkorenev/inventory:ts-0.1.0
       name: inventory

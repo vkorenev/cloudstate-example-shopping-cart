@@ -27,7 +27,7 @@ services:
       - "9001:9000"
 
   inventory-impl:
-    image: vkorenev/inventory:java-0.2
+    image: vkorenev/inventory:ts-0.1.0
     environment:
       HOST: inventory-impl
 

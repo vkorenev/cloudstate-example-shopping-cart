@@ -1,0 +1,53 @@
+{
+  "name": "inventory",
+  "version": "0.1.0",
+  "description": "Sample CloudState event sourced shopping cart application",
+  "keywords": [
+    "serverless",
+    "cloudstate",
+    "event-sourcing"
+  ],
+  "homepage": "https://github.com/cloudstateio/samples-ts-shoppingcart",
+  "bugs": {
+    "url": "https://github.com/cloudstateio/samples-ts-shoppingcart/issues"
+  },
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cloudstateio/samples-ts-shoppingcart.git",
+    "directory": "inventory"
+  },
+  "dependencies": {
+    "@grpc/proto-loader": "^0.5.1",
+    "cloudstate": "0.0.3",
+    "grpc": "^1.22.2",
+    "patch-package": "^6.2.2"
+  },
+  "devDependencies": {
+    "@types/google-protobuf": "^3.2.5",
+    "@typescript-eslint/eslint-plugin": "^2.31.0",
+    "@typescript-eslint/parser": "^2.31.0",
+    "concurrently": "^4.1.0",
+    "eslint": "^6.8.0",
+    "eslint-config-google": "^0.14.0",
+    "rimraf": "^3.0.2",
+    "ts-loader": "^6.0.1",
+    "ts-protoc-gen": "^0.12.0",
+    "typescript": "^3.7.4"
+  },
+  "scripts": {
+    "postinstall": "patch-package",
+    "clean": "rimraf build",
+    "compile:proto-desc": "compile-descriptor proto/inventory.proto",
+    "precompile:pb:js": "mkdirp build/proto",
+    "compile:pb:js": "pbjs -t static-module -w commonjs -o build/proto/inventory.js proto/inventory.proto proto/domain.proto",
+    "compile:pb:ts": "pbts -o build/proto/inventory.d.ts build/proto/inventory.js",
+    "compile:pb": "npm run compile:pb:js && npm run compile:pb:ts",
+    "compile:ts": "tsc",
+    "predockerbuild": "npm run compile:proto-desc && npm run compile:pb && npm run compile:ts",
+    "dockerbuild": "docker build . -t vkorenev/inventory:ts-0.1.0",
+    "dockerpush": "docker push vkorenev/inventory:ts-0.1.0",
+    "dockerbuildpush": "npm run dockerbuild && npm run dockerpush",
+    "start": "node build/service.js"
+  }
+}
