@@ -69,25 +69,20 @@ entity.setBehavior((cart: domain.Cart) => {
  * Handler for add item commands.
  */
 function addItem(addItem: api.AddLineItem, cart: domain.Cart, ctx): Empty {
-    console.log("addItem", addItem)
+    console.log("Add item", addItem)
+
     // Validation:
     // Make sure that it is not possible to add negative quantities
     if (addItem.quantity < 1) {
-        console.log("addItem:: quantity check failed")
         ctx.fail("Cannot add negative quantity to item " + addItem.productId)
         return {}
     } else {
-        // Create the event.    
-        const itemAdded = ItemAdded.create({
-            item: {
-                productId: addItem.productId,
-                name: addItem.name,
-                quantity: addItem.quantity
-            }
-        })
         // Emit the event.
-        console.log("addItem::emit event", itemAdded)
-        ctx.emit(itemAdded)
+        ctx.emit(ItemAdded.create({
+            productId: addItem.productId,
+            name: addItem.name,
+            quantity: addItem.quantity
+        }))
         return {}
     }
 }
@@ -96,24 +91,21 @@ function addItem(addItem: api.AddLineItem, cart: domain.Cart, ctx): Empty {
  * Handler for remove item commands.
  */
 function removeItem(removeItem: api.RemoveLineItem, cart: domain.Cart, ctx): Empty {
-    console.log("removeItem", removeItem)
+    console.log("Remove item", removeItem)
+
     // Validation:
     // Check that the item that we're removing actually exists.
-    const existing = cart.items.find(item => {
-        console.log("removeItem:: return existing")
-        return item.productId === removeItem.productId
-    })
+    const existing = cart.items[removeItem.productId]
 
     // If not, fail the command.
-    if (!existing) {
-        ctx.fail("Item " + removeItem.productId + " not in cart")
+    if (existing) {
+        // Otherwise, emit an item removed event.
+        ctx.emit(ItemRemoved.create({
+            productId: removeItem.productId
+        }))
         return {}
     } else {
-        // Otherwise, emit an item removed event.
-        const itemRemoved = ItemRemoved.create({
-            productId: removeItem.productId
-        })
-        ctx.emit(itemRemoved)
+        ctx.fail(`Item ${removeItem.productId} not in cart`)
         return {}
     }
 }
@@ -121,47 +113,58 @@ function removeItem(removeItem: api.RemoveLineItem, cart: domain.Cart, ctx): Emp
 /**
  * Handler for get cart commands.
  */
-function getCart(request: api.GetShoppingCart, cart: domain.Cart): api.Cart {
-    console.log("getCart", cart)
-    // Simply return the shopping cart as is.
-    return cart
+function getCart(request: api.GetShoppingCart, cart: domain.Cart): api.ICart {
+    console.log("Get cart", request)
+
+    const items = Object.entries(cart.items).map(([productId, lineItem]) => {
+        return {
+            productId: productId,
+            name: lineItem.name,
+            quantity: lineItem.quantity
+        }
+    })
+
+    console.log("Cart items", items)
+
+    return {
+        items: items
+    }
 }
 
 /**
  * Handler for item added events.
  */
-function itemAdded(added: domain.ItemAdded, cart: domain.Cart): domain.Cart {
-    console.log("itemAdded")
-
-    const item = added.item!
+function itemAdded(added: domain.ItemAdded, cart: domain.Cart): domain.ICart {
     // If there is an existing item with that product id, we need to increment its quantity.
-    const existing = cart.items.find(item => {
-        console.log("itemAdded::return existing")
-        return item.productId === item.productId
-    })
+    const existing = cart.items[added.productId]
 
     if (existing) {
-        existing.quantity = existing.quantity! + item.quantity!
+        console.log("Existing item added", added)
+        existing.quantity = existing.quantity! + added.quantity
     } else {
-        console.log("itemAdded::push")
+        console.log("New item added", added)
         // Otherwise, we just add the item to the existing list.
-        cart.items.push(item)
+        cart.items[added.productId] = {
+            name: added.name,
+            quantity: added.quantity
+        }
     }
 
     // And return the new state.
-    console.log("return state")
+    console.log("Updated cart", cart)
     return cart
 }
 
 /**
  * Handler for item removed events.
  */
-function itemRemoved(removed: domain.ItemRemoved, cart: domain.Cart): domain.Cart {
-    // Filter the removed item from the items by product id.
-    cart.items = cart.items.filter(item => {
-        return item.productId !== removed.productId
-    })
+function itemRemoved(removed: domain.ItemRemoved, cart: domain.Cart): domain.ICart {
+    console.log("Item removed", removed)
+
+    // Delete the removed item from the items by product id.
+    delete cart.items[removed.productId]
 
     // And return the new state.
+    console.log("Updated cart", cart)
     return cart
 }

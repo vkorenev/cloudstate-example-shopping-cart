@@ -5,15 +5,11 @@ package com.example.shoppingcart.persistence;
 
 option go_package = "persistence";
 
-message LineItem {
+// The item added event.
+message ItemAdded {
     string productId = 1;
     string name = 2;
     int32 quantity = 3;
-}
-
-// The item added event.
-message ItemAdded {
-    LineItem item = 1;
 }
 
 // The item removed event.
@@ -21,7 +17,12 @@ message ItemRemoved {
     string productId = 1;
 }
 
+message LineItem {
+    string name = 2;
+    int32 quantity = 3;
+}
+
 // The shopping cart state.
 message Cart {
-    repeated LineItem items = 1;
+    map<string, LineItem> items = 1;
 }
