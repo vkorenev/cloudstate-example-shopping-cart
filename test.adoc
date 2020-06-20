@@ -1,0 +1,8 @@
+= Test
+
+Test include
+
+[source,Dockerfile]
+----
+include::ts-shopping-cart/Dockerfile[]
+----
