@@ -1,3 +1,6 @@
+**Note:** The code from this repository is being transferred to official Cloudstate samples:  
+https://github.com/cloudstateio/samples-ts-shoppingcart  
+https://github.com/cloudstateio/samples-java-shoppingcart
 
 # Cloudstate Sample Shopping Cart Application
 
