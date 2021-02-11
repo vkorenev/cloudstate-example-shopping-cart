@@ -1,0 +1,56 @@
+diff --git a/node_modules/cloudstate/src/stateless-support.js b/node_modules/cloudstate/src/stateless-support.js
+index 0e0c42c..25c572a 100644
+--- a/node_modules/cloudstate/src/stateless-support.js
++++ b/node_modules/cloudstate/src/stateless-support.js
+@@ -132,7 +132,7 @@ module.exports = class StatelessServices {
+   handleStreamedIn(call, callback){
+     call.on("data", data => {
+       const service = this.services[data.serviceName];
+-      if (tservice && service.commandHandlers.hasOwnProperty(data.name)) {
++      if (service && service.commandHandlers.hasOwnProperty(data.name)) {
+         const userReturn = service.commandHandlers[data.name](service.deserialize(data.payload));
+         const grpcReturn = service.service.methods[data.name].resolvedResponseType.fromObject(userReturn);
+         const requireJsonType =true;
+@@ -155,17 +155,34 @@ module.exports = class StatelessServices {
+   handleUnary(call, callback){
+     const service = this.services[call.request.serviceName];
+     if (service && service.commandHandlers.hasOwnProperty(call.request.name)) {
+-      const userReturn = service.commandHandlers[call.request.name](service.deserialize(call.request.payload));
+-      const grpcReturn = service.service.methods[call.request.name].resolvedResponseType.fromObject(userReturn);
+-      const requireJsonType =true;
+-      var metadata = new grpc.Metadata();
+-      callback(null, {        
+-        reply:{
+-          payload: AnySupport.serialize(grpcReturn, false, false, requireJsonType)          
++      function onSuccess(userReturn) {
++        const grpcReturn = service.service.methods[call.request.name].resolvedResponseType.fromObject(userReturn);
++        const requireJsonType = true;
++        const metadata = new grpc.Metadata();
++        callback(null, {
++          reply: {
++            payload: AnySupport.serialize(grpcReturn, false, false, requireJsonType)
++          }
++        }, metadata);
++      }
++
++      function onFailure(err) {
++        callback(err)
++      }
++
++      try {
++        const userReturn = service.commandHandlers[call.request.name](service.deserialize(call.request.payload));
++        if (userReturn instanceof Promise) {
++          userReturn.then(onSuccess, onFailure)
++        } else {
++          onSuccess(userReturn)
+         }
+-      }, metadata);
++      } catch (err) {
++        onFailure(err)
++      }
+     }else{
+       console.warn("There is no user function with name: " + call.request.serviceName);
++      // TODO Shouldn't this error be reported via callback?
+       callback();
+     }    
+   }
